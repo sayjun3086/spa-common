@@ -1,8 +1,8 @@
       
       
-      
 /* LibBase_spa.css */
 /* 20261119 12시 */
+/* 20261124 : 공용 게시판형 페이징(.std-pagination, .std-page-btn) 및 모바일 대응 스타일 추가 */
 
 /* ------------[1. 프로그램 공통 부분 - 수정 금지]---------------------------------------------------------------------------------------------------------- */
 :root { 
@@ -311,13 +311,13 @@ body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color);
   cursor: pointer !important; background-color: #f8fbff !important;
 }
 
-
-
-
-
-
-
-
+/*--------------------------------------------------------------------------------------------------*/
+/* ⭐️ [추가] 공용 게시판형 페이징 바 (.std-pagination, .std-page-btn) */
+.std-pagination { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 14px; padding: 4px 0;}
+.std-page-btn { min-width: 34px; height: 32px; padding: 0 8px; border: 1px solid #ced4da; border-radius: 5px; background: #fff; color: #333; font-size: 13px; font-weight: 500; cursor: pointer; transition: background-color 0.15s, border-color 0.15s;}
+.std-page-btn:hover:not(:disabled):not(.active) { background: #f1f3f5; border-color: #adb5bd;}
+.std-page-btn.active { background: var(--biz-blue); border-color: var(--biz-blue); color: #fff; font-weight: bold; cursor: default;}
+.std-page-btn:disabled { background: #f8f9fa; color: #adb5bd; border-color: #e9ecef; cursor: not-allowed;}
 
 
 
@@ -402,6 +402,10 @@ body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color);
       .std-modal-header { padding: 10px 14px; font-size: 14px; }
       .std-modal-list th, .std-modal-list td { padding: 10px 6px; font-size: 12px; }
 
+      /* ⭐️ [추가] 공용 게시판형 페이징 바 모바일 대응 */
+      .std-pagination { gap: 4px; margin-top: 10px; }
+      .std-page-btn { min-width: 36px; height: 34px; font-size: 13px; }
+
 
 
 }      
@@ -471,5 +475,7 @@ body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color);
   .hide-tablet { display: none !important; }
       
 }
+
+
 
 
