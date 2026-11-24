@@ -479,9 +479,12 @@ body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color);
       .std-modal-header { padding: 10px 14px; font-size: 14px; }
       .std-modal-list th, .std-modal-list td { padding: 10px 6px; font-size: 12px; }
 
+
       /* ⭐️ [추가] 공용 게시판형 페이징 바 모바일 대응 */
+      /* ⭐️ [수정] 360px 모바일 1줄 유지(두 자릿수 페이지 포함)를 위해 버튼 너비·높이·패딩·글자크기 축소 */
       .std-pagination { gap: 4px; margin-top: 10px; }
-      .std-page-btn { min-width: 36px; height: 34px; font-size: 13px; }
+      .std-page-btn { min-width: 30px; height: 30px; padding: 0 4px; font-size: 12px; }
+  
 
       /* ⭐️ [추가] 공용 리스트 상단 메타 바 모바일 대응 */
       .std-list-meta { gap: 6px; margin: 6px 0; }
