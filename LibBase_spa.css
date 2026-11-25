@@ -492,6 +492,9 @@ body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color);
       .std-page-size select { padding: 5px 8px; font-size: 12px; }
       .std-count-text { font-size: 12px; }
 
+      /* ⭐️ [추가] 공용 옵션 단독사용 모바일 대응 */
+      .std-m-full { grid-column: 1 / -1 !important; width: 100% !important; }
+
 
 
 }      
