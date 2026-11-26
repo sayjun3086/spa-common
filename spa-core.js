@@ -2,6 +2,7 @@
 
 // =========================================================================
 // spa-core.js : 전 학교 공용 SPA 코어 스크립트 (메뉴바, 캐시, 라우터, 세션, PWA)
+// 20261126 : 개발자(Z) 학교 바로가기 1회용 토큰(jump_token) 자동 로그인 처리 추가
 // =========================================================================
 
 // =========================================================================
@@ -623,7 +624,8 @@ window.refreshCurrentSpaModule = function() {
   navigateTo(APP_STATE.currentCode, true);
 };
 
-window.applySpaLoginSuccess = function(loginData) {
+// ⭐️ [수정] 개발자 바로가기(isJump) 진입 시 메뉴바 강제 갱신(forceMenuRefresh) 지원
+window.applySpaLoginSuccess = function(loginData, forceMenuRefresh) {
   APP_STATE.isLoggedIn = true;
   APP_STATE.sid = loginData.sid;
   APP_STATE.userHashId = loginData.userHashId;
@@ -638,12 +640,15 @@ window.applySpaLoginSuccess = function(loginData) {
     lastActiveAt: Date.now()
   }));
 
-  document.getElementById("info-bar_1").style.display = "none";
-  document.getElementById("info-bar_2").style.display = "flex";
-  document.getElementById("loggedInUserName").innerText = `👤 ${APP_STATE.userName}님 반갑습니다.`;
+  const infoBar1 = document.getElementById("info-bar_1");
+  const infoBar2 = document.getElementById("info-bar_2");
+  const loggedInUserEl = document.getElementById("loggedInUserName");
+  if (infoBar1) infoBar1.style.display = "none";
+  if (infoBar2) infoBar2.style.display = "flex";
+  if (loggedInUserEl) loggedInUserEl.innerText = `👤 ${APP_STATE.userName}님 반갑습니다.`;
 
   if (typeof window.initMenuBarData === "function") {
-    window.initMenuBarData(APP_STATE.userHashId, APP_STATE.sid);
+    window.initMenuBarData(APP_STATE.userHashId, APP_STATE.sid, null, Boolean(forceMenuRefresh || loginData.isJump));
   }
   navigateTo(APP_STATE.mainmenuCode, true);
 };
@@ -817,6 +822,64 @@ document.addEventListener("DOMContentLoaded", async function() {
       return await res.json();
     }
   };
+
+  // ⭐️ [추가] 개발자(Z) 학교 바로가기 1회용 토큰(jump_token) 감지 및 자동 로그인 처리
+  const urlParams = new URLSearchParams(window.location.search);
+  const jumpToken = (urlParams.get("jump_token") || "").trim();
+  if (jumpToken) {
+    // 주소창에서 jump_token 파라미터 즉시 제거 (보안 및 새로고침 시 재소비 방지)
+    urlParams.delete("jump_token");
+    const cleanQuery = urlParams.toString();
+    const cleanUrl = window.location.pathname + (cleanQuery ? "?" + cleanQuery : "") + window.location.hash;
+    try {
+      window.history.replaceState({}, document.title, cleanUrl);
+    } catch (e) {}
+
+    SPA_CACHE.syncData("GONGJI", function(data) {
+      gongTable(data);
+      const gongContainer = document.getElementById("gongContainer");
+      if (gongContainer) gongContainer.style.display = "flex";
+    });
+
+    try {
+      if (typeof showOverlay === "function") showOverlay(true);
+      const jumpRes = await window.SUPA_DIRECT.rpc("rpc_schooljump_consume", {
+        p_token: jumpToken,
+        p_school_code: APP_STATE.schoolCode || "OOO"
+      });
+
+      if (jumpRes && jumpRes.result && jumpRes.return_data) {
+        window.applySpaLoginSuccess(jumpRes.return_data, true);
+        return;
+      }
+
+      if (typeof showOverlay === "function") showOverlay(false);
+      const errMsg = (jumpRes && jumpRes.msg) ? jumpRes.msg : "⛔ 바로가기 토큰이 만료되었거나 유효하지 않습니다.";
+      if (typeof showModal === "function") {
+        showModal(errMsg, {
+          showCancel: false,
+          onConfirm: function() { navigateTo(APP_STATE.portalCode); }
+        });
+      } else {
+        alert(errMsg);
+        navigateTo(APP_STATE.portalCode);
+      }
+      return;
+    } catch (err) {
+      if (typeof showOverlay === "function") showOverlay(false);
+      const errMsg = "⛔ 바로가기 세션 생성 중 오류가 발생했습니다.<br>" + escapeHtml(err.message || err);
+      if (typeof showModal === "function") {
+        showModal(errMsg, {
+          showCancel: false,
+          onConfirm: function() { navigateTo(APP_STATE.portalCode); }
+        });
+      } else {
+        alert("⛔ 바로가기 세션 생성 중 오류가 발생했습니다.");
+        navigateTo(APP_STATE.portalCode);
+      }
+      return;
+    }
+  }
 
   const saved = sessionStorage.getItem("SPA_SESSION");
   if (saved) {
@@ -1120,8 +1183,4 @@ function requestInstallModal() {
     showManualGuide(); 
   }
 }
-
-
-
-
 
