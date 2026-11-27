@@ -4,6 +4,7 @@
 /* 20261119 12시 */
 /* 20261124 : 공용 게시판형 페이징(.std-pagination, .std-page-btn) 및 모바일 대응 스타일 추가 */
 /* 20261124 : 공용 리스트 상단 메타 바(.std-list-meta, .std-page-size, .std-count-text) 및 모바일 대응 스타일 추가 */
+/* 20261127 : 태블릿 구간(601px~1024px)에 공용 모달·페이징·메타 바·옵션 단독사용(.std-m-full) 스타일 추가 */
 
 /* ------------[1. 프로그램 공통 부분 - 수정 금지]---------------------------------------------------------------------------------------------------------- */
 :root { 
@@ -576,6 +577,24 @@ body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color);
 
   /* 태블릿에서 특정 열 숨기기 유틸리티 */
   .hide-tablet { display: none !important; }
+
+  /* ⭐️ [추가] 공용 검색/선택 모달 태블릿 대응 */
+  .std-modal-box { max-width: 520px; max-height: 85vh; border-radius: 10px; }
+  .std-modal-header { padding: 10px 14px; font-size: 14px; }
+  .std-modal-list th, .std-modal-list td { padding: 10px 6px; font-size: 12px; }
+
+  /* ⭐️ [추가] 공용 게시판형 페이징 바 태블릿 대응 */
+  .std-pagination { gap: 4px; margin-top: 10px; }
+  .std-page-btn { min-width: 32px; height: 32px; padding: 0 6px; font-size: 12px; }
+
+  /* ⭐️ [추가] 공용 리스트 상단 메타 바 태블릿 대응 */
+  .std-list-meta { gap: 6px; margin: 6px 0; }
+  .std-page-size { font-size: 12px; }
+  .std-page-size select { padding: 5px 8px; font-size: 12px; }
+  .std-count-text { font-size: 12px; }
+
+  /* ⭐️ [추가] 공용 옵션 단독사용 태블릿 대응 */
+  .std-m-full { grid-column: 1 / -1 !important; width: 100% !important; }
       
 }
 
